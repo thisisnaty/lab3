@@ -214,28 +214,40 @@ bool isValid(int row, int col) {
 }
 
 //AGUAS AGREGASTE LABELS COMO PARAMETRO
-void getConnectedNeighbors(vector* neighbors, unsigned char labels[], unsigned char image[], int row, int col) {
+int getCase(vector* neighbors, unsigned char labels[], int row, int col, setLabel*) {
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
-	int posNeighbor, pos;
-	int labeled = 0;
-	int diffLabels = 0;
-	pos = row*_width + col;
+	int posNeighbor, posNeighborAux, labeled, diffLabels, currentLabel;
+	labeled = 0;
+	diffLabels = 0;
 	for(int i = 0; i < 4; i++) {
 		if(isValid(row+neighborRow[i], neighborCol[i]+col)) {
 			posNeighbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
 			if(labels[posNeighbor] != 0) {
+				currentLabel = labels[posNeighbor];
 				labeled++;
-				
+				for(int j = 0; j < 4; j++) {
+					if(isValid(row+neighborRow[j], neighborCol[j]+col)) {
+						posNeighborAux = (row+neighborRow[j])*_width + (neighborCol[j]+col);
+						if(labels[posNeighborAux] != currentLabel) {
+							diffLabels++;
+						}
+					}
+				}
 			}
-			/*
-			if(i == 3) {
-				sameValue += ((int)image[pos] == (int)image[posNeighbor]);
-				push = sameValue;
-			}*/
-			
 		}
 	}
+	
+	setLabel = currentLabel;
+	
+	if(labeled == 0) {
+		return 1;
+	}
+	if(!diffLabels) {
+		return 2;
+	}
+	return 3;
+	
 }
 
 int getMinLabel(vector neighbors) {
@@ -249,9 +261,10 @@ int getMinLabel(vector neighbors) {
 }
 
 void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
-	int position, currentRow, nextLabel, minLabel, minNeighbor;
+	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel;
 	nextLabel = 100;
 	vector neighbors;
+	int *setLabel = 0;
 	
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
@@ -260,22 +273,23 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 			
 			if((int)image[position] != backgroundColor) {
 				init(&neighbors);
-				getConnectedNeighbors(&neighbors, image, h, w);
+				caseLabel = getCase(neighbors, labels, currentRow, currentColumn, &setLabel);
 				
-				if(neighbors->position == 0) {
-					init(&linked[nextLabel]);
-					push(nextLabel, &linked[nextLabel]);
-					labels[position] = nextLabel;
-					nextLabel+=30;
+				switch (caseLabel) {
+					case 1:
+						labels[position] = nextLabel;
+						break;
+					case 2:
+						labels[position] = setLabel;
+						break;
+					case 3:
+						push(setLabel, &linked);
+						labels[position] = setLabel;
+						break;
+					default:
+						break;
 				}
 				
-				else {
-					minNeighbor = getMinLabel(neighbors);
-					labels[position] = minNeighbor;
-					for(int i = 0; i < neighbors->size; i++) {
-						push(neighbors->array[i], &linked[i]),
-					}
-				}
 				destroy(&neighbors);
 			}
 			
