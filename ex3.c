@@ -213,27 +213,23 @@ bool isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
-//AGUAS AGREGASTE LABELS COMO PARAMETRO
-int getCase(vector* neighbors, unsigned char labels[], int row, int col, setLabel*) {
+int getCaseAndSetLabel(vector* neighbors, unsigned char labels[], int row, int col, setLabel*) {
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
 	int posNeighbor, posNeighborAux, labeled, diffLabels, currentLabel;
 	labeled = 0;
 	diffLabels = 0;
+	int min = labels[row*_width+col-1];
 	for(int i = 0; i < 4; i++) {
 		if(isValid(row+neighborRow[i], neighborCol[i]+col)) {
 			posNeighbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
 			if(labels[posNeighbor] != 0) {
 				currentLabel = labels[posNeighbor];
-				labeled++;
-				for(int j = 0; j < 4; j++) {
-					if(isValid(row+neighborRow[j], neighborCol[j]+col)) {
-						posNeighborAux = (row+neighborRow[j])*_width + (neighborCol[j]+col);
-						if(labels[posNeighborAux] != currentLabel) {
-							diffLabels++;
-						}
-					}
+				if(currentLabel < min) {
+					min = currentLabel;
+					diffLabels = 1;
 				}
+				labeled++;
 			}
 		}
 	}
@@ -251,9 +247,9 @@ int getCase(vector* neighbors, unsigned char labels[], int row, int col, setLabe
 }
 
 int getMinLabel(vector neighbors) {
-	int min = -1;
+	int min = neighbors->array[0];
 	for(int i = 0; i < neighbors->position; i++) {
-		if(neighbors->array[i] < min) {
+		if(neighbors->array[i] < min && neighbors->array[i] != 0) {
 			min = neighbors->array[i];
 		}
 	}
@@ -264,7 +260,7 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel;
 	nextLabel = 100;
 	vector neighbors;
-	int *setLabel = 0;
+	int setLabel = 0;
 	
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
@@ -273,7 +269,7 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 			
 			if((int)image[position] != backgroundColor) {
 				init(&neighbors);
-				caseLabel = getCase(neighbors, labels, currentRow, currentColumn, &setLabel);
+				caseLabel = getCase(neighbors, labels, h, currentColumn, &setLabel);
 				
 				switch (caseLabel) {
 					case 1:
