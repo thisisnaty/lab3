@@ -199,13 +199,12 @@ void imgThresholding(int threshold, unsigned char image[]) {
 }
 
 void initLabelArray(unsigned char labels[]) {
-	int position, currentRow, currentColumn;
+	int position, currentRow;
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
-		for(int w = 0; w < _width; w++) {
-			currentColumn = w;
+		for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
 			position = currentRow + currentColumn;
-				labels[position] = 0;
+		  labels[position] = 0;
 		}
 	}
 }
@@ -241,7 +240,7 @@ void getConnectedNeighbors(vector* neighbors, unsigned char labels[], unsigned c
 
 int getMinLabel(vector neighbors) {
 	int min = -1;
-	for(int i = 0; i < neighbors->size; i++) {
+	for(int i = 0; i < neighbors->position; i++) {
 		if(neighbors->array[i] < min) {
 			min = neighbors->array[i];
 		}
@@ -249,15 +248,14 @@ int getMinLabel(vector neighbors) {
 	return min;
 }
 
-void firstPass (vector linked[], unsigned char labels[], unsigned char image[]) {
-	int position, currentRow, currentColumn, nextLabel, minLabel, minNeighbor;
+void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
+	int position, currentRow, nextLabel, minLabel, minNeighbor;
 	nextLabel = 100;
 	vector neighbors;
 	
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
-		for(int w = 0; w < _width; w++) {
-			currentColumn = w;
+		for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
@@ -285,9 +283,11 @@ void firstPass (vector linked[], unsigned char labels[], unsigned char image[]) 
 	}
 }
 
-void cca(unsigned char image[]){
-	vector linked[];
-	unsigned char *labels = NULL;
+void cca(unsigned char labels[], unsigned char image[]){
+	vector linked[100];
+	labels = malloc(_width * _height * sizeof(*labels));
+  initLabelArray(labels);
+  
 	firstPass(linked, labels, image);
 }
 
@@ -304,10 +304,12 @@ int main(int argc, char *argv[])
 	read_JPEG_file(argv[1], &_width, &_height, &_channels, &image);
 	
 	threshold = getThreshold(image);
-	
 	imgThresholding(threshold, image);
-	
-	write_JPEG_file(argv[2], _width, _height, _channels, image, 95);
+
+  unsigned char *labels;
+  cca(labels, image);
+
+	write_JPEG_file(argv[2], _width, _height, _channels, labels, 95);
 	
 	return 0;
 }
