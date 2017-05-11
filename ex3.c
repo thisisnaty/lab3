@@ -213,28 +213,39 @@ bool isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
-int getCaseAndSetLabel(vector* neighbors, unsigned char labels[], int row, int col, setLabel*) {
+int getCaseAndSetLabel(unsigned char labels[], int row, int col, int *setLabel) {
+	int posNeighbor, labeled, diffLabels, currentLabel, min;
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
-	int posNeighbor, posNeighborAux, labeled, diffLabels, currentLabel;
 	labeled = 0;
 	diffLabels = 0;
-	int min = labels[row*_width+col-1];
-	for(int i = 0; i < 4; i++) {
+	min = -1;
+	
+  for(int i = 0; i < 4; i++) {
 		if(isValid(row+neighborRow[i], neighborCol[i]+col)) {
 			posNeighbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
 			if(labels[posNeighbor] != 0) {
 				currentLabel = labels[posNeighbor];
-				if(currentLabel < min) {
-					min = currentLabel;
-					diffLabels = 1;
-				}
-				labeled++;
+				if(currentLabel != min) {
+          if (min == -1) {
+            min = currentLabel;
+          }
+          else {
+					  diffLabels = 1;
+            //TODO: Add equivalnce between currentLabel and Min to table
+            if(currentLabel > min)
+					    min = currentLabel;
+            }
+          }
+				  labeled++;
+        }
 			}
 		}
 	}
 	
-	setLabel = currentLabel;
+  if (setLabel != NULL) {
+	  *setLabel = min;
+  }
 	
 	if(labeled == 0) {
 		return 1;
@@ -257,10 +268,8 @@ int getMinLabel(vector neighbors) {
 }
 
 void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
-	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel;
+	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel, setLabel;
 	nextLabel = 100;
-	vector neighbors;
-	int setLabel = 0;
 	
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
@@ -268,27 +277,24 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
-				init(&neighbors);
-				caseLabel = getCase(neighbors, labels, h, currentColumn, &setLabel);
+				caseLabel = getCase(labels, h, currentColumn, &setLabel);
 				
 				switch (caseLabel) {
 					case 1:
 						labels[position] = nextLabel;
+            nextLabel += 30;
 						break;
 					case 2:
 						labels[position] = setLabel;
 						break;
 					case 3:
-						push(setLabel, &linked);
+						push(setLabel, &linked); //TODO: Segun yo esto va en 235 en vez de aqui (lo que podria simplificar este swtich)
 						labels[position] = setLabel;
 						break;
 					default:
 						break;
 				}
-				
-				destroy(&neighbors);
 			}
-			
 		}
 	}
 }
