@@ -316,8 +316,8 @@ int main(int argc, char *argv[])
 	threshold = getThreshold(image);
 	imgThresholding(threshold, image);
 
-  unsigned char *labels;
-  cca(labels, image);
+	unsigned char *labels;
+	cca(labels, image);
 
 	write_JPEG_file(argv[2], _width, _height, _channels, labels, 95);
 	
