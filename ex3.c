@@ -214,18 +214,26 @@ bool isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
-void getConnectedNeighbors(vector* neighbors, unsigned char image[], int row, int col) {
+//AGUAS AGREGASTE LABELS COMO PARAMETRO
+void getConnectedNeighbors(vector* neighbors, unsigned char labels[], unsigned char image[], int row, int col) {
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
-	int posNieghbor, pos;
-	int push = 0;
+	int posNeighbor, pos;
+	int labeled = 0;
+	int diffLabels = 0;
 	pos = row*_width + col;
 	for(int i = 0; i < 4; i++) {
 		if(isValid(row+neighborRow[i], neighborCol[i]+col)) {
-			posNieghbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
-			if(i == 3) {
-				push = ((int)image[pos] == (int)image[posNieghbor]);
+			posNeighbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
+			if(labels[posNeighbor] != 0) {
+				labeled++;
+				
 			}
+			/*
+			if(i == 3) {
+				sameValue += ((int)image[pos] == (int)image[posNeighbor]);
+				push = sameValue;
+			}*/
 			
 		}
 	}
@@ -243,7 +251,7 @@ int getMinLabel(vector neighbors) {
 
 void firstPass (vector linked[], unsigned char labels[], unsigned char image[]) {
 	int position, currentRow, currentColumn, nextLabel, minLabel, minNeighbor;
-	nextLabel = 1;
+	nextLabel = 100;
 	vector neighbors;
 	
 	for(int h = 0; h < _height; h++) {
@@ -260,7 +268,7 @@ void firstPass (vector linked[], unsigned char labels[], unsigned char image[]) 
 					init(&linked[nextLabel]);
 					push(nextLabel, &linked[nextLabel]);
 					labels[position] = nextLabel;
-					nextLabel++;
+					nextLabel+=30;
 				}
 				
 				else {
