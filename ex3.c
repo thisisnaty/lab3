@@ -260,7 +260,7 @@ int getCaseAndSetLabel(vector *linked, unsigned char labels[], int row, int col,
 	return labeled == 0;
 }
 
-void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
+void firstPass(vector *linked, unsigned char labels[], unsigned char image[]) {
 	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel, setLabel;
 	nextLabel = 100;
 	
@@ -281,13 +281,13 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 	}
 }
 
-int cmpfunc (pair a, pair b) {
-	return (b.firstVal - a.firstVal);
+int cmpfunc (const void *a, const void *b) {
+	return (((pair *)b)->firstVal - ((pair *)a)->firstVal);
 }
 	
 void secondPass(vector *linked, unsigned char labels[]) {
   qsort(linked, linked->position, sizeof(int), cmpfunc);
-  int min, j;
+  int min, j, currentRow, position;
   for(int h = 0; h < _height; h++) {
     currentRow = h*_width;
     for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
@@ -308,6 +308,7 @@ void cca(unsigned char labels[], unsigned char image[]){
 	initLabelArray(labels);
 	
 	firstPass(&linked, labels, image);
+	secondPass(&linked, labels);
 }
 
 int main(int argc, char *argv[])
