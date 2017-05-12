@@ -47,26 +47,6 @@ void push(int val1, int val2, vector* v) {
 	v->position++;
 }
 
-void swap(vector* v, int l, int r) {
-	pairs tmp = v->pairs[l];
-	v->pairs[l] = v->pairs[r];
-	v->pairs[r] = tmp;
-}
-
-void sortPairs(vector* v, int l, int r) {
-	if(l.firstVal == r.firstVal) {
-		return;
-	}
-	int min = 1;
-	for(int i = l+1; i <= r; i++) {
-		if(v->pairs[i].firstVal > v->pairs[min].firstVal) {
-			min = i;
-		}
-	}
-	swap(&v, l, min);
-	sortPairs(&v, l+1, r);
-}
-
 void destroy(vector* v) {
 	free(v->pairs);
 }
@@ -301,15 +281,16 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 	}
 }
 
-void secondPass(vector linked) {
-	sortPairs(&linked);
-	int min, j;
-	for(int i = 0; i < linked->position; i++) {
-		min = linked->pairs[i].secondVal;
-		j = i+1;
-		while()
-			}
+int cmpfunc (pair a, pair b) {
+	return (b.firstVal - a.firstVal);
 }
+
+void secondPass(vector linked) {
+	qsort(linked, linked->position, sizeof(int), cmpfunc);
+	
+	for(int i = 0; i < linked->position; i++) {
+		
+	}
 
 }
 void cca(unsigned char labels[], unsigned char image[]){
