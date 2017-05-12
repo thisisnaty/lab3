@@ -16,9 +16,14 @@ int foregroundColor = 0;
 int _width, _height, _channels;
 
 typedef struct {
+	int firstVal;
+	int secondVal;
+} pair;
+
+typedef struct {
 	int size;
 	int position;
-	int array[];
+	pair pairs[];
 } vector;
 
 void init(vector* v) {
@@ -27,9 +32,9 @@ void init(vector* v) {
 	v->array = malloc(sizeof(v->array) * v->size);
 }
 
-void push(int val, vector* v) {
+void push(int val1, int val2, vector* v) {
 	if(v->position == v->size) {
-		int tmp[] = malloc(sizeof(tmp) * v->size * 2);
+		pair tmp[] = malloc(sizeof(tmp) * v->size * 2);
 		for(int i = 0; i < v->size; i++) {
 			tmp[i] = v->array[i];
 		}
@@ -37,7 +42,9 @@ void push(int val, vector* v) {
 		free(v->array);
 		v->array = tmp;
 	}
-	v->array[v->position++] = val;
+	v->position++;
+	v->array[position]->firstVal = val1;
+	v->array[position]->secondVal = val2;
 }
 
 void destroy(vector* v) {
@@ -233,31 +240,34 @@ int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col
 					else {
 						diffLabels = 1;
 						//falta ver en que posiciooon o que de que
-						push(setLabel, &linked);
-						if(currentLabel > min)
+						if(currentLabel < min) {
+							push(min, currentLabel, &linked)
 							min = currentLabel;
+						}
+						else {
+							push(currentLabel, min, &linked);
+						}
 					}
 				}
 				labeled++;
 			}
 		}
 	}
+	
+	if (setLabel != NULL) {
+		*setLabel = min;
+	}
+	
+	if(labeled == 0) {
+		return 1;
+	}
+	if(!diffLabels) {
+		return 2;
+	}
+	return 3;
+	
 }
-
-if (setLabel != NULL) {
-	*setLabel = min;
-}
-
-if(labeled == 0) {
-	return 1;
-}
-if(!diffLabels) {
-	return 2;
-}
-return 3;
-
-}
-
+/*
 int getMinLabel(vector neighbors) {
 	int min = neighbors->array[0];
 	for(int i = 0; i < neighbors->position; i++) {
@@ -266,7 +276,7 @@ int getMinLabel(vector neighbors) {
 		}
 	}
 	return min;
-}
+}*/
 
 void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel, setLabel;
@@ -278,7 +288,7 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
-				caseLabel = getCase(labels, h, currentColumn, &setLabel);
+				caseLabel = getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel);
 				
 				switch (caseLabel) {
 					case 1:
