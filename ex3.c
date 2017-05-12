@@ -309,20 +309,20 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 }
 
 void secondPass(vector linked, unsigned char labels[]) {
-	int min = -1;
+	int min, currentLabel;
+	min = -1;
 	for(int h = 0; h < _height; h++) {
 		currentRow = h*_width;
 		for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
-				currentLabel = labels[posNeighbor];
+				currentLabel = labels[position];
 				if(currentLabel != min) {
 					if (min == -1) {
 						min = currentLabel;
 					}
 					else {
-						diffLabels = 1;
 						if(currentLabel < min) {
 							push(min, currentLabel, linked);
 							min = currentLabel;
