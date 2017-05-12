@@ -295,9 +295,13 @@ void secondPass(vector *linked, unsigned char labels[]) {
       if((int)labels[position] != 0) {
         // Check all the pairs in linked, if labels[position] is equal to a firstVal in a pair, change it to secondVal and keep going
         // to make more efficient, instead of looking at all the pairs on linked we only need to look while linked[i].firstVal > labels[pisition]
-        for(int i = 0; i < linked->position; i++) {
-
-        }
+		  int i = 0;
+		  while(linked->pairs[i].firstVal > labels[position]) {
+			if(labels[position] == linked->pairs[i].firstVal) {
+				labels[position] = linked->pairs[i].secondVal;
+			}
+			  i++;
+		  }
       }
     }
   }
