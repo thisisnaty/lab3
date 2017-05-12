@@ -276,8 +276,8 @@ int getCaseAndSetLabel(vector *linked, unsigned char labels[], int row, int col,
 	if (setLabel != NULL) {
 		*setLabel = min;
 	}
-
-	return labeled == 0;	
+	
+	return labeled == 0;
 }
 
 void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
@@ -291,11 +291,11 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 			
 			if((int)image[position] != backgroundColor) {
 				if (getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel)) {
-						labels[position] = nextLabel;
-						nextLabel += 30;
-        } else {
-						labels[position] = setLabel;
-        }
+					labels[position] = nextLabel;
+					nextLabel += 30;
+				} else {
+					labels[position] = setLabel;
+				}
 			}
 		}
 	}
@@ -307,10 +307,11 @@ void secondPass(vector linked) {
 	for(int i = 0; i < linked->position; i++) {
 		min = linked->pairs[i].secondVal;
 		j = i+1;
-		while(
-	}
+		while()
+			}
 }
 
+}
 void cca(unsigned char labels[], unsigned char image[]){
 	vector linked;
 	initLabelArray(labels);
