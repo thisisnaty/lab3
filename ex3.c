@@ -311,7 +311,6 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 
 void cca(unsigned char labels[], unsigned char image[]){
 	vector linked[100];
-	labels = malloc(_width * _height * sizeof(*labels));
 	initLabelArray(labels);
 	
 	firstPass(linked, labels, image);
@@ -333,6 +332,7 @@ int main(int argc, char *argv[])
 	imgThresholding(threshold, image);
 	
 	unsigned char *labels;
+	labels = malloc(_width * _height * sizeof(*labels));
 	cca(labels, image);
 	
 	write_JPEG_file(argv[2], _width, _height, _channels, labels, 95);
