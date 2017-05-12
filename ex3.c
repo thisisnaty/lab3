@@ -29,26 +29,26 @@ typedef struct {
 void init(vector* v) {
 	v->size = 100;
 	v->position = 0;
-	v->array = malloc(sizeof(v->array) * v->size);
+	v->pairs = malloc(sizeof(v->array) * v->size);
 }
 
 void push(int val1, int val2, vector* v) {
 	if(v->position == v->size) {
 		pair tmp[] = malloc(sizeof(tmp) * v->size * 2);
 		for(int i = 0; i < v->size; i++) {
-			tmp[i] = v->array[i];
+			tmp[i] = v->pairs[i];
 		}
 		v->size *= 2;
-		free(v->array);
-		v->array = tmp;
+		free(v->pairs);
+		v->pairs = tmp;
 	}
+	v->pairs[position]->firstVal = val1;
+	v->pairs[position]->secondVal = val2;
 	v->position++;
-	v->array[position]->firstVal = val1;
-	v->array[position]->secondVal = val2;
 }
 
 void destroy(vector* v) {
-	free(v->array);
+	free(v->pairs);
 }
 
 static inline int
