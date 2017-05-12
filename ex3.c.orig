@@ -42,8 +42,13 @@ void push(int val1, int val2, vector* v) {
 		free(v->pairs);
 		v->pairs = tmp;
 	}
+<<<<<<< HEAD
+	v->pairs[v->position]->firstVal = val1;
+	v->pairs[v->position]->secondVal = val2;
+=======
 	v->pairs[v->position].firstVal = val1;
 	v->pairs[v->position].secondVal = val2;
+>>>>>>> 5555365f88fcf11f4127d304ae3dc0360771dae0
 	v->position++;
 }
 
@@ -241,7 +246,11 @@ int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col
 						diffLabels = 1;
 						//falta ver en que posiciooon o que de que
 						if(currentLabel < min) {
+<<<<<<< HEAD
+							push(min, currentLabel, &linked);
+=======
 							push(min, currentLabel, linked);
+>>>>>>> 5555365f88fcf11f4127d304ae3dc0360771dae0
 							min = currentLabel;
 						}
 						else {
