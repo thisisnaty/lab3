@@ -29,7 +29,7 @@ typedef struct {
 void init(vector* v) {
 	v->size = 100;
 	v->position = 0;
-	v->pairs = malloc(sizeof(v->array) * v->size);
+	v->pairs = malloc(sizeof(v->pairs) * v->size);
 }
 
 void push(int val1, int val2, vector* v) {
@@ -42,8 +42,8 @@ void push(int val1, int val2, vector* v) {
 		free(v->pairs);
 		v->pairs = tmp;
 	}
-	v->pairs[position]->firstVal = val1;
-	v->pairs[position]->secondVal = val2;
+	v->pairs[v->position]->firstVal = val1;
+	v->pairs[v->position]->secondVal = val2;
 	v->position++;
 }
 
@@ -216,7 +216,7 @@ void initLabelArray(unsigned char labels[]) {
 	}
 }
 
-bool isValid(int row, int col) {
+int isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
@@ -241,7 +241,7 @@ int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col
 						diffLabels = 1;
 						//falta ver en que posiciooon o que de que
 						if(currentLabel < min) {
-							push(min, currentLabel, &linked)
+							push(min, currentLabel, &linked);
 							min = currentLabel;
 						}
 						else {
