@@ -240,7 +240,7 @@ int isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
-int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col, int *setLabel) {
+int getCaseAndSetLabel(vector *linked, unsigned char labels[], int row, int col, int *setLabel) {
 	int posNeighbor, labeled, diffLabels, currentLabel, min;
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
@@ -276,26 +276,9 @@ int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col
 	if (setLabel != NULL) {
 		*setLabel = min;
 	}
-	
-	if(labeled == 0) {
-		return 1;
-	}
-	if(!diffLabels) {
-		return 2;
-	}
-	return 3;
-	
+
+	return labeled == 0;	
 }
-/*
-int getMinLabel(vector neighbors) {
-	int min = neighbors->array[0];
-	for(int i = 0; i < neighbors->position; i++) {
-		if(neighbors->array[i] < min && neighbors->array[i] != 0) {
-			min = neighbors->array[i];
-		}
-	}
-	return min;
-}*/
 
 void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 	int position, currentRow, nextLabel, minLabel, minNeighbor, caseLabel, setLabel;
@@ -307,22 +290,12 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
-				caseLabel = getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel);
-				
-				switch (caseLabel) {
-					case 1:
+				if (getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel)) {
 						labels[position] = nextLabel;
 						nextLabel += 30;
-						break;
-					case 2:
+        } else {
 						labels[position] = setLabel;
-						break;
-					case 3:
-						labels[position] = setLabel;
-						break;
-					default:
-						break;
-				}
+        }
 			}
 		}
 	}
@@ -342,7 +315,7 @@ void cca(unsigned char labels[], unsigned char image[]){
 	vector linked;
 	initLabelArray(labels);
 	
-	firstPass(linked, labels, image);
+	firstPass(&linked, labels, image);
 }
 
 int main(int argc, char *argv[])
