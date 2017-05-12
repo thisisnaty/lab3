@@ -47,6 +47,26 @@ void push(int val1, int val2, vector* v) {
 	v->position++;
 }
 
+void swap(vector* v, int l, int r) {
+	pairs tmp = v->pairs[l];
+	v->pairs[l] = v->pairs[r];
+	v->pairs[r] = tmp;
+}
+
+void sortPairs(vector* v, int l, int r) {
+	if(l.firstVal == r.firstVal) {
+		return;
+	}
+	int min = 1;
+	for(int i = l+1; i <= r; i++) {
+		if(v->pairs[i].firstVal > v->pairs[min].firstVal) {
+			min = i;
+		}
+	}
+	swap(&v, l, min);
+	sortPairs(&v, l+1, r);
+}
+
 void destroy(vector* v) {
 	free(v->pairs);
 }
@@ -308,32 +328,13 @@ void firstPass(vector linked, unsigned char labels[], unsigned char image[]) {
 	}
 }
 
-void secondPass(vector linked, unsigned char labels[]) {
-	int min, currentLabel;
-	min = -1;
-	for(int h = 0; h < _height; h++) {
-		currentRow = h*_width;
-		for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
-			position = currentRow + currentColumn;
-			
-			if((int)image[position] != backgroundColor) {
-				currentLabel = labels[position];
-				if(currentLabel != min) {
-					if (min == -1) {
-						min = currentLabel;
-					}
-					else {
-						if(currentLabel < min) {
-							push(min, currentLabel, linked);
-							min = currentLabel;
-						}
-						else {
-							push(currentLabel, min, linked);
-						}
-					}
-				}
-			}
-		}
+void secondPass(vector linked) {
+	sortPairs(&linked);
+	int min, j;
+	for(int i = 0; i < linked->position; i++) {
+		min = linked->pairs[i].secondVal;
+		j = i+1;
+		while(
 	}
 }
 
