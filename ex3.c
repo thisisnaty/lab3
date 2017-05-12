@@ -195,7 +195,7 @@ void imgThresholding(int threshold, unsigned char image[]) {
 			}
 		}
 	}
-
+	
 }
 
 void initLabelArray(unsigned char labels[]) {
@@ -204,7 +204,7 @@ void initLabelArray(unsigned char labels[]) {
 		currentRow = h*_width;
 		for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
 			position = currentRow + currentColumn;
-		  labels[position] = 0;
+			labels[position] = 0;
 		}
 	}
 }
@@ -213,7 +213,7 @@ bool isValid(int row, int col) {
 	return (row >= 0 && col >= 0 && row < _height && col < _width);
 }
 
-int getCaseAndSetLabel(unsigned char labels[], int row, int col, int *setLabel) {
+int getCaseAndSetLabel(vector linked[], unsigned char labels[], int row, int col, int *setLabel) {
 	int posNeighbor, labeled, diffLabels, currentLabel, min;
 	int neighborRow[4] = {-1, -1, -1, 0};
 	int neighborCol[4] = {1, 0, -1, -1};
@@ -221,40 +221,41 @@ int getCaseAndSetLabel(unsigned char labels[], int row, int col, int *setLabel) 
 	diffLabels = 0;
 	min = -1;
 	
-  for(int i = 0; i < 4; i++) {
+	for(int i = 0; i < 4; i++) {
 		if(isValid(row+neighborRow[i], neighborCol[i]+col)) {
 			posNeighbor = (row+neighborRow[i])*_width + (neighborCol[i]+col);
 			if(labels[posNeighbor] != 0) {
 				currentLabel = labels[posNeighbor];
 				if(currentLabel != min) {
-          if (min == -1) {
-            min = currentLabel;
-          }
-          else {
-					  diffLabels = 1;
-            //TODO: Add equivalnce between currentLabel and Min to table
-            if(currentLabel > min)
-					    min = currentLabel;
-            }
-          }
-				  labeled++;
-        }
+					if (min == -1) {
+						min = currentLabel;
+					}
+					else {
+						diffLabels = 1;
+						//falta ver en que posiciooon o que de que
+						push(setLabel, &linked);
+						if(currentLabel > min)
+							min = currentLabel;
+					}
+				}
+				labeled++;
 			}
 		}
 	}
-	
-  if (setLabel != NULL) {
-	  *setLabel = min;
-  }
-	
-	if(labeled == 0) {
-		return 1;
-	}
-	if(!diffLabels) {
-		return 2;
-	}
-	return 3;
-	
+}
+
+if (setLabel != NULL) {
+	*setLabel = min;
+}
+
+if(labeled == 0) {
+	return 1;
+}
+if(!diffLabels) {
+	return 2;
+}
+return 3;
+
 }
 
 int getMinLabel(vector neighbors) {
@@ -282,13 +283,12 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 				switch (caseLabel) {
 					case 1:
 						labels[position] = nextLabel;
-            nextLabel += 30;
+						nextLabel += 30;
 						break;
 					case 2:
 						labels[position] = setLabel;
 						break;
 					case 3:
-						push(setLabel, &linked); //TODO: Segun yo esto va en 235 en vez de aqui (lo que podria simplificar este swtich)
 						labels[position] = setLabel;
 						break;
 					default:
@@ -302,8 +302,8 @@ void firstPass(vector linked[], unsigned char labels[], unsigned char image[]) {
 void cca(unsigned char labels[], unsigned char image[]){
 	vector linked[100];
 	labels = malloc(_width * _height * sizeof(*labels));
-  initLabelArray(labels);
-  
+	initLabelArray(labels);
+	
 	firstPass(linked, labels, image);
 }
 
@@ -321,10 +321,10 @@ int main(int argc, char *argv[])
 	
 	threshold = getThreshold(image);
 	imgThresholding(threshold, image);
-
+	
 	unsigned char *labels;
 	cca(labels, image);
-
+	
 	write_JPEG_file(argv[2], _width, _height, _channels, labels, 95);
 	
 	return 0;
