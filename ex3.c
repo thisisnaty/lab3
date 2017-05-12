@@ -270,7 +270,8 @@ void firstPass(vector *linked, unsigned char labels[], unsigned char image[]) {
 			position = currentRow + currentColumn;
 			
 			if((int)image[position] != backgroundColor) {
-				if (getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel)) {
+        caseLabel = getCaseAndSetLabel(linked, labels, h, currentColumn, &setLabel);
+				if (caseLabel) {
 					labels[position] = nextLabel;
 					nextLabel += 30;
 				} else {
@@ -293,15 +294,13 @@ void secondPass(vector *linked, unsigned char labels[]) {
     for(int currentColumn = 0; currentColumn < _width; currentColumn++) {
       position = currentRow + currentColumn;
       if((int)labels[position] != 0) {
-        // Check all the pairs in linked, if labels[position] is equal to a firstVal in a pair, change it to secondVal and keep going
-        // to make more efficient, instead of looking at all the pairs on linked we only need to look while linked[i].firstVal > labels[pisition]
-		  int i = 0;
-		  while(linked->pairs[i].firstVal > labels[position]) {
-			if(labels[position] == linked->pairs[i].firstVal) {
-				labels[position] = linked->pairs[i].secondVal;
-			}
-			  i++;
-		  }
+        int i = 0;
+        while(linked->pairs[i].firstVal > labels[position]) {
+          if(labels[position] == linked->pairs[i].firstVal) {
+            labels[position] = linked->pairs[i].secondVal;
+          }
+          i++;
+        }
       }
     }
   }
@@ -309,10 +308,12 @@ void secondPass(vector *linked, unsigned char labels[]) {
 
 void cca(unsigned char labels[], unsigned char image[]){
 	vector linked;
+  init(&linked);
 	initLabelArray(labels);
 	
 	firstPass(&linked, labels, image);
-	secondPass(&linked, labels);
+	//secondPass(&linked, labels);
+  destroy(&linked);
 }
 
 int main(int argc, char *argv[])
