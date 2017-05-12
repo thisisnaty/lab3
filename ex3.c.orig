@@ -338,7 +338,12 @@ void secondPass(vector linked, unsigned char labels[]) {
 }
 
 void cca(unsigned char labels[], unsigned char image[]){
+<<<<<<< HEAD
 	vector linked;
+	labels = malloc(_width * _height * sizeof(*labels));
+=======
+	vector linked[100];
+>>>>>>> 42d079a47b694b5bf7167cbb2be803540926afa4
 	initLabelArray(labels);
 	
 	firstPass(linked, labels, image);
